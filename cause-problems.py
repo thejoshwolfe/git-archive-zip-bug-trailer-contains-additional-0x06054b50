@@ -6,7 +6,7 @@
 # ZIP file comments are generally dangerous to include in ZIP files for this reason.
 
 # The result is here:
-# https://github.com/thejoshwolfe/poc-github-zip-exploit/tree/5255838826120e75e47c5e7f650fa3c6e3dc072c
+# https://github.com/thejoshwolfe/poc-github-zip-exploit/tree/b65497e8a662866aaf6d68dc59608ebb620982db
 
 import os, sys, subprocess
 

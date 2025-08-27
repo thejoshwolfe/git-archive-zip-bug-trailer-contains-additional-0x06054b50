@@ -18,14 +18,16 @@ which means the ZIP file format is ambiguous.
 Most unzipping programs scan backward for the signature and trust the occurrence closest to the end of the file,
 which means that most unzipping programs will identify what `git` intended to be the "size of the central directory" as the "signature",
 and the desync causes the rest of the parsing to fail catastrophically.
-A sufficiently sophisticated hacker could in principle create a git commit that when downloaded/exported as a ZIP file appears to unzip correctly with surprising contents.
+A sufficiently sophisticated hacker might possibly be able to create a git commit that when downloaded/exported as a ZIP file appears to unzip correctly with surprising contents,
+although it seems unlikely given that such an archive would almost surely appear to be a multi-disk archive,
+which most zip readers do not support.
 
 Interestingly, while many ZIP implementations seem aware that the archive comment must not contain the signature,
 no implementation that I could find seemed aware that the signature ambiguity can also happen in the rest of the fields of the "end of central directory record".
-Examples: https://github.com/python/cpython/blob/3.14/Lib/zipfile/__init__.py#L366-L367 , https://github.com/thejoshwolfe/yazl/blob/3.3.1/index.js#L159 , Info-ZIP 3.0 `zipfile.c:scanzipf_regnew():L3492`.
+Examples: https://github.com/python/cpython/blob/3.14/Lib/zipfile/__init__.py#L366-L367 , https://github.com/thejoshwolfe/yazl/blob/3.3.1/index.js#L159 , https://github.com/thejoshwolfe/info-zip-zip/blob/3.0/zipfile.c#L4118-L4119 .
 It is counterintuitive that adding a comment introduces ambiguity in seemingly unrelated fields earlier in the struct.
 Because git never includes the signature in the archive comment itself, the git developers could have had a false sense of confidence including an archive comment,
-falling for the same misunderstanding as the developers of the above linked projects.
+falling for the same misunderstanding as the developers of the above linked projects (hi).
 However this is speculation, as there is no relevant commentary I could find in the code or commit messages all the way back to the feature's initial introduction in https://github.com/git/git/commit/e4fbbfe9eccd37c0f9c060eac181ce05988db76c .
 
 ## Usage
